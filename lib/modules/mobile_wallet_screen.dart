@@ -14,11 +14,12 @@ class MobileWalletScreen extends StatefulWidget {
 }
 
 class _MobileWalletScreenState extends State<MobileWalletScreen> {
-  late final WebViewController _controller;
+    WebViewController? _controller;
 
   @override
   void initState() {
     super.initState();
+
 
     late final PlatformWebViewControllerCreationParams params;
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
@@ -30,10 +31,11 @@ class _MobileWalletScreenState extends State<MobileWalletScreen> {
       params = const PlatformWebViewControllerCreationParams();
     }
 
-    WebViewController controller =
+     _controller =
         WebViewController.fromPlatformCreationParams(params);
 
-    controller = WebViewController()
+    _controller = WebViewController()
+      ..loadRequest(Uri.parse(ApiConstant.mobileWalletIframe))
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(
         const Color(0x00000000),
@@ -46,7 +48,6 @@ class _MobileWalletScreenState extends State<MobileWalletScreen> {
           );
         },
       )
-      ..loadRequest(Uri.parse(ApiConstant.mobileWalletIframe))
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -72,14 +73,12 @@ class _MobileWalletScreenState extends State<MobileWalletScreen> {
         ),
       );
 
-    if (controller.platform is AndroidWebViewController) {
+    if (_controller!.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController)
+      (_controller!.platform as AndroidWebViewController)
           .setMediaPlaybackRequiresUserGesture(false);
     }
-    // #enddocregion platform_features
 
-    _controller = controller;
   }
 
   @override
@@ -100,7 +99,7 @@ class _MobileWalletScreenState extends State<MobileWalletScreen> {
         ],
       ),
       body: WebViewWidget(
-        controller: _controller,
+        controller: _controller!,
       ),
     );
   }

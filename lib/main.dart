@@ -5,6 +5,7 @@ import 'package:paymob_test/core/helper.dart';
 import 'package:paymob_test/core/service_locator.dart';
 import 'package:paymob_test/modules/cubit/payment_cubit.dart';
 import 'package:paymob_test/modules/user_details.dart';
+import 'package:paymob_test/modules/widget/custom_loading.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,13 +45,32 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Center(
-        child: TextButton(
-          child: const Text('CHECKOUT'),
-          onPressed: () {
+      body: BlocConsumer<PaymentCubit, PaymentState>(
+        listener: (context, state) {
+          if(state is GetAuthTokenLoadingState){
+            OverlayLoadingProgress.start(context);
+          }
+
+          if(state is GetAuthTokenSuccessState){
             context.push(const UserDetails());
-          },
-        ),
+            OverlayLoadingProgress.stop();
+          }
+
+          if(state is GetAuthTokenErrorState){
+            OverlayLoadingProgress.stop();
+          }
+
+        },
+        builder: (context, state) {
+          return Center(
+            child: TextButton(
+              child: const Text('CHECKOUT'),
+              onPressed: () {
+                PaymentCubit.get(context).getAuthToken();
+              },
+            ),
+          );
+        },
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:paymob_test/modules/mobile_wallet_screen.dart';
 import 'package:paymob_test/modules/ref_code_screen.dart';
 import 'package:paymob_test/modules/visa_screen.dart';
 import 'package:paymob_test/modules/widget/cached_images.dart';
+import 'package:paymob_test/modules/widget/custom_loading.dart';
 
 class ToggleScreen extends StatelessWidget {
   const ToggleScreen({Key? key}) : super(key: key);
@@ -15,11 +16,20 @@ class ToggleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<PaymentCubit, PaymentState>(
       listener: (context, state) {
+        if (state is GetPaymentRedCodeLoadingState ||
+            state is GetPaymentMobileWalletLoadingState) {
+          OverlayLoadingProgress.start(context);
+        }
+
         if (state is GetPaymentRedCodeSuccessState) {
           context.push(const RefCodeScreen());
+
+          OverlayLoadingProgress.stop();
         }
+
         if (state is GetPaymentMobileWalletSuccessState) {
           context.push(MobileWalletScreen());
+          OverlayLoadingProgress.stop();
         }
       },
       builder: (context, state) {

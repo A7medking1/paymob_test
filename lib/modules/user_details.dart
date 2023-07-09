@@ -5,6 +5,7 @@ import 'package:paymob_test/core/service_locator.dart';
 import 'package:paymob_test/modules/cubit/payment_cubit.dart';
 import 'package:paymob_test/modules/toggle_screen.dart';
 import 'package:paymob_test/modules/widget/custom_form_field.dart';
+import 'package:paymob_test/modules/widget/custom_loading.dart';
 import 'package:paymob_test/modules/widget/default_button.dart';
 
 class UserDetails extends StatefulWidget {
@@ -32,7 +33,7 @@ class _UserDetailsState extends State<UserDetails> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    sl<PaymentCubit>().getAuthToken();
+    //sl<PaymentCubit>().getAuthToken();
   }
 
   @override
@@ -57,8 +58,14 @@ class _UserDetailsState extends State<UserDetails> {
     addressController.text = 'aaa';
     return BlocConsumer<PaymentCubit, PaymentState>(
       listener: (context, state) {
+
+        if(state is GetOrderIdLoadingState){
+          OverlayLoadingProgress.start(context,);
+        }
+
         if (state is GetPaymentRequestSuccessState) {
           context.push(const ToggleScreen());
+          OverlayLoadingProgress.stop();
         }
       },
       builder: (context, state) {
@@ -173,34 +180,29 @@ class _UserDetailsState extends State<UserDetails> {
                           const SizedBox(
                             height: 30,
                           ),
-                          state is! GetOrderIdLoadingState
-                              ? DefaultButton(
-                                  backgroundColor: Colors.purple,
-                                  widget: const Text(
-                                    'Register',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18.0,
-                                      letterSpacing: 1.6,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    if (formKey.currentState!.validate()) {
-                                      cubit.getOrderId(
-                                        firstName: firstNameController.text,
-                                        lastName: lastNameController.text,
-                                        city: addressController.text,
-                                        email: emailController.text,
-                                        price: priceController.text,
-                                        phone: phoneController.text,
-                                      );
-                                    }
-                                  },
-                                )
-                              : const Center(
-                                  child: CircularProgressIndicator.adaptive(
-                                  backgroundColor: Colors.purple,
-                                )),
+                          DefaultButton(
+                            backgroundColor: Colors.purple,
+                            widget: const Text(
+                              'Register',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                letterSpacing: 1.6,
+                              ),
+                            ),
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                cubit.getOrderId(
+                                  firstName: firstNameController.text,
+                                  lastName: lastNameController.text,
+                                  city: addressController.text,
+                                  email: emailController.text,
+                                  price: priceController.text,
+                                  phone: phoneController.text,
+                                );
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),

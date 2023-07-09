@@ -19,8 +19,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     try {
       Response response =
           await apiConsumer.post(ApiConstant.getAuthToken, body: {
-        "api_key":
-            "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TnpJME5URTJMQ0p1WVcxbElqb2lhVzVwZEdsaGJDSjkuVDUzRVczclY3RTUxd0t1aF95eVROWTFkUzcwZlRrTnJvbUZBVTNmQlROM2VyRFpIYVhxRHI0X3BTU1ptMlNzVEV2QkQ5UTM2RUlDVnE0WW56bWZjX1E="
+        "api_key": ApiConstant.paymentApiKey
       });
 
       ApiConstant.paymentAuthToken = response.data['token'];
